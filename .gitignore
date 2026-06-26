@@ -1,0 +1,11 @@
+# Ignorar datasets y modelos pesados
+*.csv
+*.parquet
+*.npy
+*.json
+*.pkl
+*.h5
+*.pt
+# Ignorar entornos virtuales si usas python
+venv/
+.venv/
