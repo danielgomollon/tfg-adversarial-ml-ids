@@ -1,21 +1,14 @@
-MIT License
+ACADEMIC AND NON-COMMERCIAL SOURCE-AVAILABLE LICENSE
 
-Copyright (c) 2026 danielgomollon
+Copyright (c) 2026 Daniel Gomollón Embid. All Rights Reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted to use, copy, and review this software and associated documentation (the "Software") strictly for academic, educational, evaluation, and personal non-commercial research purposes.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+RESTRICTIONS AND PROHIBITIONS:
+1. COMMERCIAL USE: Any use, reproduction, modification, distribution, or integration of this Software (or any portion thereof) for commercial, industrial, or revenue-generating purposes is strictly prohibited without the prior express written authorization of the copyright holder.
+2. PROTECTED MODULES & ALGORITHMS: The prohibition on commercial exploitation and derivative works applies specifically, but is not limited to:
+   - All defensive architectures and retraining algorithms, including the SGL-AT (Stochastic Geometric Latent Adversarial Training) algorithm and the multi-tier cascade defensive architecture (SGL-AT triage system + Variational Autoencoder / VAE).
+   - All adversarial attack algorithms (including all implemented attacks, discarded candidate attacks, and the 2 grey-box APT orchestrator simulations).
+3. PATENT RIGHTS: No express or implied license under any patents or patent applications is granted by this document. Any unauthorized attempt to claim patent rights, commercialize, or file patent applications based on the algorithms, methodologies, or implementations contained herein is strictly prohibited.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
