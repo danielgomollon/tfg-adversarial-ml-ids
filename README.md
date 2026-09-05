@@ -17,7 +17,7 @@
 La adopción masiva de algoritmos de **Machine Learning (ML)** y **Deep Learning (DL)** en los *Sistemas de Detección de Intrusiones (IDS)* perimetrales contrasta fuertemente con su vulnerabilidad frente a **perturbaciones adversariales** diseñadas para evadir la clasificación en producción. 
 
 Este proyecto investiga la resiliencia de dos paradigmas tabulares contrapuestos: **modelos de partición ortogonal (LightGBM)** y **modelos de frontera continua (Tabular ResNet)**. Para evaluar su solidez real en entornos industriales:
-1. Se implementa un **pipeline de datos de grado industrial** sobre el dataset **BigFlow-NIDS** (1.07M de flujos) con un **IP Behavior Buffer** que captura contexto temporal asíncrono respetando la causalidad estricta para evitar fugas de datos (*data leakage*).
+1. Se implementa un **pipeline de datos de grado industrial** sobre el dataset **BigFlow-NIDS** (66.9M de flujos, submuestreado a 1.07M para train) con un **IP Behavior Buffer** que captura contexto temporal asíncrono respetando la causalidad estricta para evitar fugas de datos (*data leakage*).
 2. Se somete al sistema a un **framework ofensivo iterativo compuesto por 12 ataques adversariales y 2 simulaciones de APT** en caja gris con un **motor de restricciones físicas de red** (*domain constraints*), demostrando que los ataques puramente matemáticos de laboratorio fracasan al imponer las leyes del protocolo TCP/IP, pero que el **camuflaje semántico (S3M/LSF)** logra perforar las defensas base (>96% ASR).
 3. Como contramedida, se propone una **arquitectura defensiva asimétrica en cascada** que combina un modelo continuo reentrenado con **SGL-AT (Stochastic Geometric Latent Adversarial Training)** y un **Autoencoder Variacional (VAE)** con detección por **distancia de Mahalanobis híbrida**, reduciendo la evasión crítica y detectando el 98.1% de amenazas de día cero (*zero-day*).
 
@@ -29,44 +29,43 @@ El sistema procesa el tráfico a alta velocidad mediante un mecanismo de **inspe
 
 ```mermaid
 flowchart TD
-    A[📡 Tráfico de Red NetFlow] --> B[ Pipeline ETL + IP Behavior Buffer]
-    B --> C[ Nivel 1: Tabular ResNet + Reentrenamiento SGL-AT]
-    
-    C -->|Confianza P ≥ 0.85 AND Cerca de Centroide EMA| D[ Tráfico Benigno / Ataque Conocido]
-    C -->|Incertidumbre P < 0.85 OR Desviación Latente| E[ Nivel 2: Autoencoder Variacional / VAE]
-    
-    E --> F{¿Distancia Mahalanobis D_M ≤ Umbral?}
-    F -->|Sí| G[ Muestra Benigna Validada]
-    F -->|No| H[ ALERTA CRÍTICA: Troyano Esteganográfico / Zero-Day]
+    A["Tráfico de Red NetFlow"] --> B["Pipeline ETL + IP Behavior Buffer"]
+    B --> C["Nivel 1: Tabular ResNet + Reentrenamiento SGL-AT"]
 
+    C -->|"Confianza P >= 0.85 AND Cerca de Centroide EMA"| D["Tráfico Benigno / Ataque Conocido"]
+    C -->|"Incertidumbre P < 0.85 OR Desviación Latente"| E["Nivel 2: Autoencoder Variacional / VAE"]
+
+    E --> F{"¿Distancia Mahalanobis D_M <= Umbral?"}
+    F -->|"Sí"| G["Muestra Benigna Validada"]
+    F -->|"No"| H["ALERTA CRÍTICA: Troyano Esteganográfico / Zero-Day"]
 ```
-
 ## Framework Ofensivo (12 Ataques + 2 Simulaciones APT)
 
 Los ataques desarrollados se estructuran en 4 categorías progresivas:
+```mermaid
 flowchart TD
+    A["FRAMEWORK OFENSIVO ADVERSARIAL"]:::title
 
-    A[FRAMEWORK OFENSIVO ADVERSARIAL]:::title
+    A --> B1["1. Estudio de Ablación"]
+    B1 --> C1["FGSM, PGD (Neural)"]
+    B1 --> C2["SGFP, SIGMA (Árboles)"]
 
-    A --> B1[1. Estudio de Ablación]
-    B1 --> C1[FGSM, PGD (Neural)]
-    B1 --> C2[SGFP, SIGMA (Árboles)]
+    A --> B2["2. Ataques Avanzados"]
+    B2 --> D1["ACE, DLA (Neural)"]
+    B2 --> D2["LEAF, THORN (Árboles)"]
 
-    A --> B2[2. Ataques Avanzados]
-    B2 --> D1[ACE, DLA (Neural)]
-    B2 --> D2[LEAF, THORN (Árboles)]
+    A --> B3["3. Simulaciones APT"]
+    B3 --> E1["SPECTRA (Surrogate Trees)"]
+    B3 --> E2["CORTEX (Surrogate Neural)"]
 
-    A --> B3[3. Simulaciones APT]
-    B3 --> E1[SPECTRA (Surrogate Trees)]
-    B3 --> E2[CORTEX (Surrogate Neural) — Caja Gris]
+    A --> B4["4. Colapso Sistémico"]
+    B4 --> F1["OMEGA (Zero-Box)"]
+    B4 --> F2["ECHO"]
+    B4 --> F3["S3M"]
+    B4 --> F4["LSF (Esteganografía)"]
 
-    A --> B4[4. Colapso Sistémico]
-    B4 --> F1[OMEGA (Zero-Box)]
-    B4 --> F2[ECHO]
-    B4 --> F3[S3M]
-    B4 --> F4[LSF (Esteganografía)]
-
-    classDef title fill=#222,color=#fff,font-weight:bold;
+    classDef title fill:#222222,color:#ffffff,font-weight:bold;
+```
 
 ## Desglose de ataques
 
@@ -109,7 +108,28 @@ Rendimiento de ataques clásicos:
 
 Esto demuestra que los ataques de laboratorio convencionales corrompen la semántica del protocolo TCP/IP, inflando artificialmente la vulnerabilidad del sistema.
 
-### 3. Mitigación con Defensa en Cascada (Fase 3)
+### 3. Simulaciones APT en Caja Gris y Peligrosidad Real (SPECTRA y CORTEX)
+
+Las simulaciones SPECTRA (ensambles de árboles vía THORN/LEAF) y CORTEX (redes profundas vía ACE/DLA) evalúan la peligrosidad real bajo condiciones de producción, exponiendo las brechas de extractores tradicionales como NFStream, CICFlowMeter o YAF.
+
+```mermaid
+flowchart LR
+    A["Atacante (NF-UQ-NIDS-v2)<br/>30 Features NetFlow Estandar<br/>(NFStream / CICFlowMeter)"] -->|"Consulta Interseccion Kernel"| B["Exploit Minimo Viable<br/>S_coste = L2 . (1 + ln(1 + L0))"]
+    B -->|"Inyeccion en Red Victima"| C{"¿Victima posee IP Behavior Buffer?"}
+    C -->|"SI (BigFlow-NIDS, 66 Vars)"| D["Contencion Exitosa (ASR: 3.4% - 4.1%)"]
+    C -->|"NO (NIDS Ciego Tradicional)"| E["Colapso de Seguridad (ASR: 39.3% - 64.4%)"]
+```
+
+- Asimetría Espacial y Kernel de Características: El atacante entrena modelos subrogados en un dataset público estandarizado (NF-UQ-NIDS-v2, 30 variables NetFlow puras), ignorando las 15 variables del IPBehaviorBuffer de la víctima (BigFlow-NIDS, 66 variables).
+
+- Búsqueda del Exploit Mínimo Viable ($S_{\text{coste}}$): Se optimiza la función de coste compuesto para maximizar el sigilo:
+    - $$S_{\text{coste}} = L_2 \cdot \left(1 + \ln(1 + L_0)\right)$$
+
+Esta formulación penaliza la energía total de la perturbación ($L_2$) y premia alterar la menor cantidad de variables ($L_0$).
+
+- Peligrosidad de Extractores Sin Estado: Cuando el IDS activa el búfer histórico, la tasa de transferencia cae al $3.4\% - 4.1\%$. Sin embargo, al suprimir el búfer (simulando extractores sin persistencia de estado) la evasión se dispara hasta un 39.3% en LightGBM y un 64.4% en Tabular ResNet.
+
+### 4. Mitigación con Defensa en Cascada (Fase 3)
 
 Frente a ataques esteganográficos y de camuflaje de sesión (S3M / LSF), el enrutamiento dinámico en cascada mostró una mejora sustancial.
 
